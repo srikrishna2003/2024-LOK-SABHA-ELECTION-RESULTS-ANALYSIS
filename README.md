@@ -1,21 +1,377 @@
-# 2024-LOK-SABHA-ELECTION-RESULTS-ANALYSIS
-INSIGHTS OF LOK SABHA 2024 ELECTIONS:
-BJP Domination: The Bharatiya Janata Party (BJP) emerged as the leading party, having gained 240 seats out of 543​ (ECI Results)​.
+import pandas as pd
+import mysql.connector
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
-Congress Lead: The Indian National Congress (INC) won as many as 99 seats; the number was seen as an excellent improvement for the party from the previous elections​ (ECI Results)​.
+db_config = {
+    'user': 'root',       
+    'password': 'admin',   
+    'host': 'localhost',           
+    'database': 'election_data'    
+}
 
-Regional Parties: Regional parties like the Samajwadi Party (SP) and the All India Trinamool Congress (AITC) were others that did well, winning 37 and 29 seats, respectively​ (ECI Results).
+conn = mysql.connector.connect(**db_config)
 
-Tamil Nadu: In Tamil Nadu, DMK took the lion's share with 22 seats, followed by the INC at 9​ (ECI Results)​.
+cursor = conn.cursor()
 
-Kerala: The Congress won 14 out of the 20 available seats in Kerala. The other seats went to IUML, CPI(M), BJP, and others​ (ECI Results)​.
+# Fetch data
+query1 = """
+SELECT constituency, leading_candidate, leading_party, margin 
+FROM election_results 
+order by margin desc
+limit 10
+"""
 
-Punjab: The INC party ensured it won 7 seats out of 13 seats for itself in the state of Punjab, as three seats went to the Aam Aadmi Party and 2 to Independents​(ECI Results)​.
+cursor.execute(query1)
 
-Independent Candidates: Independent candidates made their presence quite strong in some states, winning seven seats overall​(ECI Results)​.
+results = cursor.fetchall()
 
-BJP in Telangana: All India Majlis-E-Ittehadul Muslimeen's Asaduddin Owaisi saved his turf in Hyderabad, while the BJP did massively well in the area​ (ECI Results)​.
+# Convert results to a DataFrame
+df = pd.DataFrame(results, columns=['Constituency', 'Leading Candidate', 'Leading Party', 'Margin'])
 
-North-Eastern States: Parties like the United People's Party, Liberal (UPPL), and the Asom Gana Parishad (AGP) managed to win in North-Eastern states, hence showing an arrayed political landscape​ (ECI Results)​.
+# Close the cursor and connection
+cursor.close()
+conn.close()
 
-Diverse Representation: Some seats were also secured by the smaller parties and independents throughout other states, taking the new Lok Sabha to a high level of representation of different political voices ​(ECI Results)​​ (ECI Results)​​ (ECI Results)​.
+
+df
+
+df['Candidate and Party'] = df['Leading Candidate'] + ' (' + df['Leading Party'] + ')'
+
+plt.figure(figsize=(14, 8))
+sns.barplot(x='Margin', y='Candidate and Party', data=df, palette="viridis")
+plt.title('Top 10 Candidates by Victory Margin')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+
+ax = plt.gca()
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: '{:,.0f}'.format(x)))
+
+plt.show()
+
+db_config = {
+    'user': 'root',       
+    'password': 'admin',   
+    'host': 'localhost',           
+    'database': 'election_data'    
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query3 = """
+SELECT constituency, leading_candidate, leading_party, margin 
+FROM election_results 
+order by margin asc
+limit 10
+"""
+
+cursor.execute(query3)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['Constituency', 'Leading Candidate', 'Leading Party', 'Margin'])
+
+cursor.close()
+conn.close()
+
+df
+
+df['Candidate and Party'] = df['Leading Candidate'] + ' (' + df['Leading Party'] + ')'
+
+plt.figure(figsize=(14, 8))
+sns.barplot(x='Margin', y='Candidate and Party', data=df, palette="viridis")
+plt.title('Bottom 10 Candidates by Victory Margin')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+
+ax = plt.gca()
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: '{:,.0f}'.format(x)))
+
+plt.show()
+
+db_config = {
+    'user': 'root',       
+    'password': 'admin',   
+    'host': 'localhost',           
+    'database': 'election_data'    
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query3 = """
+SELECT constituency, leading_candidate, leading_party, margin 
+FROM election_results 
+order by margin asc
+limit 10
+"""
+
+cursor.execute(query3)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['Constituency', 'Leading Candidate', 'Leading Party', 'Margin'])
+
+cursor.close()
+conn.close()
+
+df
+
+df['Candidate and Party'] = df['Leading Candidate'] + ' (' + df['Leading Party'] + ')'
+
+plt.figure(figsize=(14, 8))
+sns.barplot(x='Margin', y='Candidate and Party', data=df, palette="viridis")
+plt.title('Bottom 10 Candidates by Victory Margin')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+
+ax = plt.gca()
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: '{:,.0f}'.format(x)))
+
+plt.show()
+
+db_config = {
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',           # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'    # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query2 = """
+select leading_party, COUNT(leading_party) as total_counts
+from election_results
+group by leading_party
+"""
+
+cursor.execute(query2)
+
+results_query_2 = cursor.fetchall()
+
+df_2 = pd.DataFrame(results_query_2, columns=['leading_party', 'Total Counts'])
+
+cursor.close()
+conn.close()
+
+df_2
+
+plt.figure(figsize=(14,14))
+sns.barplot(x='Total Counts',y='leading_party',data=df_2,palette="viridis")
+plt.title('Number of Constituencies Won by Each Party')
+plt.xlabel('Number of Constituencies')
+plt.ylabel('Leading Party')
+plt.show()
+
+db_config = {
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',           # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'    # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query4 = """
+select trailing_party , SUM(margin) as sum
+from election_results	
+group by trailing_party
+order by sum desc 
+limit 10;
+"""
+
+cursor.execute(query4)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['trailing_party', 'count'])
+
+cursor.close()
+conn.close()
+
+df
+
+
+plt.figure(figsize=(12, 8))
+sns.barplot(x='trailing_party', y='count', data=df)
+plt.title('Top 10 Trailing Parties By Votes')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+plt.xticks(rotation=45)
+plt.show()
+
+db_config = {
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',           # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'    # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query4 = """
+select trailing_party , SUM(margin) as sum
+from election_results	
+group by trailing_party
+order by sum desc 
+limit 10;
+"""
+
+cursor.execute(query4)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['trailing_party', 'count'])
+
+cursor.close()
+conn.close()
+
+df
+
+
+plt.figure(figsize=(12, 8))
+sns.barplot(x='trailing_party', y='count', data=df)
+plt.title('Top 10 Trailing Parties By Votes')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+plt.xticks(rotation=45)
+plt.show()
+
+db_config = {
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',           # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'    # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query4 = """
+select trailing_party , COUNT(*) as sum
+from election_results	
+group by trailing_party
+order by sum desc 
+limit 10;
+"""
+
+cursor.execute(query4)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['trailing_party', 'count'])
+
+cursor.close()
+conn.close()
+
+df
+
+
+plt.figure(figsize=(12, 8))
+sns.barplot(x='trailing_party', y='count', data=df)
+plt.title('Top 10 Trailing Parties By Seats')
+plt.xlabel('Margin')
+plt.ylabel('Candidate and Party')
+plt.xticks(rotation=45)
+plt.show()
+
+db_config = {
+    'user': 'root',       # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',           # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'    # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query4 = """
+WITH CTE AS (
+    SELECT * 
+    FROM election_results
+    WHERE leading_candidate IN ('Rahul Gandhi', 'Narendra Modi', 'Amit Shah', 'Akhilesh Yadav')
+)
+SELECT
+    constituency,
+    leading_candidate,
+    CAST(SUM(margin) AS FLOAT) AS Sum
+FROM
+    CTE
+GROUP BY
+    constituency,
+    leading_candidate
+
+
+"""
+
+cursor.execute(query4)
+
+results = cursor.fetchall()
+
+df = pd.DataFrame(results, columns=['constituency','leading_candidate', 'sum'])
+
+cursor.close()
+conn.close()
+
+df
+
+
+plt.figure(figsize=(12, 8))
+sns.barplot(x='leading_candidate', y='sum', hue='constituency', data=df)
+plt.title('Comparison Of Votes For Top Party Candidates')
+plt.xlabel('Candidate and Party')
+plt.ylabel('Margin')
+plt.xticks(rotation=45)
+
+plt.legend(title='Constituency', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+plt.show()
+
+db_config = {
+    'user': 'root',        # Replace with your MySQL username
+    'password': 'admin',   # Replace with your MySQL password
+    'host': 'localhost',   # Replace with your MySQL host, e.g., 'localhost'
+    'database': 'election_data'  # Replace with your database name
+}
+
+conn = mysql.connector.connect(**db_config)
+
+cursor = conn.cursor()
+
+query = """
+SELECT
+    margin
+FROM
+    election_results;
+"""
+
+cursor.execute(query)
+
+results = cursor.fetchall()
+
+cursor.close()
+conn.close()
+
+df = pd.DataFrame(results, columns=['margin'])
+
+
+plt.figure(figsize=(10, 6))
+plt.hist(df['margin'], bins=20, color='skyblue', edgecolor='black')
+plt.title('Histogram of Margins of Victory')
+plt.xlabel('Margin of Victory')
+plt.ylabel('Frequency')
+plt.grid(True)
+plt.show()
+
